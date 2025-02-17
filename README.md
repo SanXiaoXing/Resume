@@ -29,12 +29,12 @@
 ## 📁目录结构
 
 ```
-Resume/										# 根目录
+Resume/								# 根目录
 ├─ .gitignore
-├─ README.md							# 本仓库说明文档
-├─ assets/								# 存放图标或字体资源文件夹
+├─ README.md						# 本仓库说明文档
+├─ assets/							# 存放图标或字体资源文件夹
 │  └─ favicon.svg
-├─ index.html							# 主界面
+├─ index.html						# 主界面
 └─ vercel.json						# Vercel 必要路由配置
 ```
 
