@@ -1,12 +1,16 @@
 {
     "routes": [
       { "handle": "filesystem" },
-      { "src": "/.*", "dest": "/index.html" }
+      { "src": "/.*", "dest": "/index.html" },
+      {
+        "src": "/archived",
+        "dest": "/archived.html"
+      },
+      {
+        "src": "/Archived/(.*)",
+        "dest": "/Archived/$1"
+      }
     ],
-    "rewrites": [
-    {
-      "source": "/Archived/(.*)",
-      "destination": "/Archived/$1"
-    }
-  ]
+    "trailingSlash": false,
+    "cleanUrls": true
   }
