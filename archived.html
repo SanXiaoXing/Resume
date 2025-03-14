@@ -2,7 +2,7 @@
  * @Author: SanXiaoXing
  * @Date: 2025-03-15 01:14:26
  * @LastEditors: SanXiaoXing
- * @LastEditTime: 2025-03-15 02:16:02
+ * @LastEditTime: 2025-03-15 02:24:36
  * @Description: 归档界面
 -->
 
@@ -72,40 +72,28 @@
     <ul id="file-list"></ul>
 
     <script>
-        const archiveDir = "/Archived/";
-    
-        fetch(archiveDir)
+        // 修改为直接加载 JSON 文件
+        fetch("./Archived/file-list.json")
         .then(response => {
-            if (!response.ok) throw new Error(`目录不存在: ${archiveDir}`);
-            return response.text();
+            if (!response.ok) throw new Error(`文件列表加载失败`);
+            return response.json();
         })
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const links = Array.from(doc.querySelectorAll('a'))
-                .filter(link => 
-                    link.href.endsWith('.html') && 
-                    !link.href.endsWith('/')
-                )
-                .map(link => {
-                    const url = new URL(link.href, window.location.href);
-                    return url.pathname.split('/').pop();
-                });
-    
+        .then(files => {
             const list = document.getElementById('file-list');
-            links.forEach(file => {
+            files.forEach(file => {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 
-                // 设置列表项样式
-                li.style.listStyleType = "disc"; // 无序列表符号
-                li.style.fontSize = "20px";      // 字体大小
-                li.style.lineHeight = "1.6";     // 行高
-    
-                a.href = `${archiveDir}${file}`;
+                // 设置样式
+                li.style.listStyleType = "disc";
+                li.style.fontSize = "20px";
+                li.style.lineHeight = "1.6";
+
+                // 修正链接路径
+                a.href = `./Archived/${file}`;  // 使用相对路径
                 a.textContent = file.replace('.html', '');
-                a.style.textDecoration = "none"; // 移除下划线
-                a.style.color = "#2c3e50";       // 文字颜色
+                a.style.textDecoration = "none";
+                a.style.color = "#2c3e50";
                 
                 li.appendChild(a);
                 list.appendChild(li);
