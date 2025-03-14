@@ -1,16 +1,31 @@
 {
-    "routes": [
-      { "handle": "filesystem" },
-      { "src": "/.*", "dest": "/index.html" },
-      {
-        "src": "/archived",
-        "dest": "/archived.html"
-      },
-      {
-        "src": "/Archived/(.*)",
-        "dest": "/Archived/$1"
-      }
-    ],
-    "trailingSlash": false,
-    "cleanUrls": true
-  }
+  "routes": [
+    { 
+      "src": "/(.*\\.(svg|css|js|json|html))", 
+      "headers": { "Cache-Control": "public, max-age=3600" },
+      "dest": "/$1" 
+    },
+    
+    { 
+      "src": "/Archived/(.*)", 
+      "dest": "/Archived/$1" 
+    },
+    
+    { 
+      "src": "/archived", 
+      "dest": "/archived.html",
+      "headers": { "Content-Type": "text/html" }
+    },
+    { 
+      "src": "/", 
+      "dest": "/index.html",
+      "headers": { "Content-Type": "text/html" }
+    },
+    
+    { 
+      "src": "/(.*)", 
+      "dest": "/index.html",
+      "headers": { "Content-Type": "text/html" }
+    }
+  ]
+}
