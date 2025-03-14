@@ -2,7 +2,7 @@
  * @Author: SanXiaoXing
  * @Date: 2025-03-15 01:14:26
  * @LastEditors: SanXiaoXing
- * @LastEditTime: 2025-03-15 01:48:22
+ * @LastEditTime: 2025-03-15 02:08:50
  * @Description: 归档界面
 -->
 
@@ -13,8 +13,6 @@
     <style>
         /* 可选：添加样式 */
         #file-list { list-style: none; padding: 0; }
-        #file-list a { color: #000000; text-decoration: none; }
-        #file-list :hover a { color: #ff9859; }
         /* 新增：头部容器以及返回按钮样式 */
         .header-container {
             display: flex;
@@ -22,6 +20,28 @@
             justify-content: center;
             position: relative;
             padding: 10px 0;
+        }
+        #file-list {
+            max-width: 600px;    /* 限制列表最大宽度 */
+            margin: 20px auto;   /* 居中显示 */
+            padding-left: 15px;  /* 整体左侧留白 */
+            color: #000000; 
+            text-decoration: none; 
+            list-style: none;
+            padding: 0;
+            display: grid;                   /* 启用 Grid 布局 */
+            grid-template-columns: repeat(2, 1fr); /* 两列 */
+            gap: 20px;                       /* 列间距 */
+        }
+        #file-list li {
+            padding-left: 20px;
+            position: relative;
+            font-size: 16px;
+        }
+        #file-list a:hover {
+            color: #ff9859 !important;     /* 悬停颜色 */
+            padding-left: 5px;            /* 悬停微移 */
+            transition: all 0.2s ease;    /* 平滑过渡 */
         }
         .back-button {
             position: absolute;
@@ -33,6 +53,15 @@
         .back-button:hover {
             color: #ff9859;
         }
+        @media (max-width: 768px) {
+            #file-list {
+                grid-template-columns: 1fr; /* 单列 */
+            }
+            /* 或 Flexbox 方案 */
+            #file-list li {
+                flex: 0 0 100%; /* 单列 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -40,15 +69,16 @@
         <a href="index.html" class="back-button">&#8592; 返回主页面</a>
         <h1>归档页面</h1>
     </div>
-    <!-- 文件列表容器（仅在此页面显示），显示为无序列表并缩进 -->
     <ul id="file-list"></ul>
 
     <script>
-        // 动态加载文件列表的逻辑（仅在此页面执行）
-        const archiveDir = "/Archived/"; 
-
+        const archiveDir = "./Archived/";
+    
         fetch(archiveDir)
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) throw new Error(`目录不存在: ${archiveDir}`);
+            return response.text();
+        })
         .then(html => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
@@ -57,25 +87,37 @@
                     link.href.endsWith('.html') && 
                     !link.href.endsWith('/')
                 )
-                .map(link => link.href.replace(archiveDir, ''));
-
+                .map(link => {
+                    const url = new URL(link.href, window.location.href);
+                    return url.pathname.split('/').pop();
+                });
+    
             const list = document.getElementById('file-list');
             links.forEach(file => {
                 const li = document.createElement('li');
-                // 设置无序列表样式和缩进
-                li.style.listStyleType = "disc";
-                li.style.marginLeft = "40px";
-
                 const a = document.createElement('a');
+                
+                // 设置列表项样式
+                li.style.listStyleType = "disc"; // 无序列表符号
+                li.style.fontSize = "20px";      // 字体大小
+                li.style.lineHeight = "1.6";     // 行高
+    
                 a.href = `${archiveDir}${file}`;
                 a.textContent = file.replace('.html', '');
+                a.style.textDecoration = "none"; // 移除下划线
+                a.style.color = "#2c3e50";       // 文字颜色
+                
                 li.appendChild(a);
                 list.appendChild(li);
             });
         })
         .catch(error => {
             console.error('加载失败:', error);
-            document.getElementById('file-list').innerHTML = "<li>暂时无法加载归档文件</li>";
+            document.getElementById('file-list').innerHTML = `
+                <li style="color: #e74c3c; margin-left: 25px; font-size: 14px;">
+                    ${error.message}
+                </li>
+            `;
         });
     </script>
 </body>
