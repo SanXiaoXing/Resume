@@ -1,0 +1,82 @@
+<!--
+ * @Author: SanXiaoXing
+ * @Date: 2025-03-15 01:14:26
+ * @LastEditors: SanXiaoXing
+ * @LastEditTime: 2025-03-15 01:43:28
+ * @Description: 归档界面
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Archived Files</title>
+    <style>
+        /* 可选：添加样式 */
+        #file-list { list-style: none; padding: 0; }
+        #file-list a { color: #000000; text-decoration: none; }
+        #file-list :hover a { color: #ff9859; }
+        /* 新增：头部容器以及返回按钮样式 */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 10px 0;
+        }
+        .back-button {
+            position: absolute;
+            left: 10px;
+            text-decoration: none;
+            font-size: 24px;
+            color: #030303;
+        }
+        .back-button:hover {
+            color: #ff9859;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <a href="index.html" class="back-button">&#8592; 返回主页面</a>
+        <h1>归档页面</h1>
+    </div>
+    <!-- 文件列表容器（仅在此页面显示），显示为无序列表并缩进 -->
+    <ul id="file-list"></ul>
+
+    <script>
+        // 动态加载文件列表的逻辑（仅在此页面执行）
+        const archiveDir = "./Archived/"; // 路径根据实际情况调整
+
+        fetch(archiveDir)
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const links = Array.from(doc.querySelectorAll('a'))
+                .filter(link => 
+                    link.href.endsWith('.html') && 
+                    !link.href.endsWith('/')
+                )
+                .map(link => link.href.replace(archiveDir, ''));
+
+            const list = document.getElementById('file-list');
+            links.forEach(file => {
+                const li = document.createElement('li');
+                // 设置无序列表样式和缩进
+                li.style.listStyleType = "disc";
+                li.style.marginLeft = "40px";
+
+                const a = document.createElement('a');
+                a.href = `${archiveDir}${file}`;
+                a.textContent = file.replace('.html', '');
+                li.appendChild(a);
+                list.appendChild(li);
+            });
+        })
+        .catch(error => {
+            console.error('加载失败:', error);
+            document.getElementById('file-list').innerHTML = "<li>暂时无法加载归档文件</li>";
+        });
+    </script>
+</body>
+</html>
