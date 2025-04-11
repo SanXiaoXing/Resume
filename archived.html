@@ -22,7 +22,7 @@
     <!-- 引入返回导航脚本 -->
     <script src="./js/backNavigation.js"></script>
 </head>
-<body class="bg-white">
+<body class="bg-white flex flex-col min-h-screen">
     <div class="flex items-center justify-center relative py-2">
         <h1 class="text-2xl font-bold">归档页面
             <span id="infoIcon" class="inline-block w-5 h-5 bg-gray-300 text-white rounded-full text-center leading-5 text-sm ml-2 cursor-pointer align-super">!</span>
@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <ul id="file-list" class="max-w-xl mx-auto grid grid-cols-2 gap-5 list-none p-0"></ul>
+    <ul id="file-list" class="max-w-xl mx-auto grid grid-cols-2 gap-5 list-none p-0 flex-grow"></ul>
 
     <script>
         // 弹窗控制
@@ -123,5 +123,38 @@
             `;
         });
     </script>
+    <footer class="mt-auto sticky bottom-0 left-0 right-0 w-full flex items-center justify-center backdrop-blur-sm py-3 bg-white bg-opacity-90">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-500">
+                <div class="inline-flex items-center gap-1">
+                        由<em>SanXiaoXing</em>创建
+                    <span class="mx-1">•</span>
+                    <a
+                        href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="hover:text-blue-600 transition-colors"
+                    >
+                        CC BY-NC-SA 4.0
+                    </a>
+                </div>
+                <span class="mx-1">•</span>
+                <a
+                    href="https://github.com/SanXiaoXing/Resume.git"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-blue-600 transition-colors"
+                >
+                    查看源码
+                </a>
+                <div class="basis-full text-center"> 
+                    <span>© 2023 - <span id="currentYear"></span></span>
+                </div>
+            </div>
+        </div>
+        </footer>
+        <script>
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+        </script>
 </body>
 </html>
