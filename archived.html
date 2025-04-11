@@ -11,68 +11,85 @@
 <head>
     <title>Archived Resume</title>
     <link rel=icon type=image/svg+xml href="/assets/favicon.svg">
-    <style>
-        /* 可选：添加样式 */
-        #file-list { list-style: none; padding: 0; }
-        /* 新增：头部容器以及返回按钮样式 */
-        .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 10px 0;
-        }
-        #file-list {
-            max-width: 600px;    /* 限制列表最大宽度 */
-            margin: 20px auto;   /* 居中显示 */
-            padding-left: 15px;  /* 整体左侧留白 */
-            color: #000000; 
-            text-decoration: none; 
-            list-style: none;
-            padding: 0;
-            display: grid;                   /* 启用 Grid 布局 */
-            grid-template-columns: repeat(2, 1fr); /* 两列 */
-            gap: 20px;                       /* 列间距 */
-        }
-        #file-list li {
-            padding-left: 20px;
-            position: relative;
-            font-size: 16px;
-        }
-        #file-list a:hover {
-            color: #ff9859 !important;     /* 悬停颜色 */
-            padding-left: 5px;            /* 悬停微移 */
-            transition: all 0.2s ease;    /* 平滑过渡 */
-        }
-        .back-button {
-            position: absolute;
-            left: 10px;
-            text-decoration: none;
-            font-size: 24px;
-            color: #030303;
-        }
-        .back-button:hover {
-            color: #ff9859;
-        }
-        @media (max-width: 768px) {
-            #file-list {
-                grid-template-columns: 1fr; /* 单列 */
-            }
-            /* 或 Flexbox 方案 */
-            #file-list li {
-                flex: 0 0 100%; /* 单列 */
-            }
-        }
-    </style>
+    <!-- 添加 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 定义返回按钮文本和链接 -->
+    <script>
+        window.backButtonText = '&#8592; 返回主页面';
+        window.backButtonHref = 'index.html';
+    </script>
+    <!-- 引入返回导航脚本 -->
+    <script src="./js/backNavigation.js"></script>
 </head>
-<body>
-    <div class="header-container">
-        <a href="index.html" class="back-button">&#8592; 返回主页面</a>
-        <h1>归档页面</h1>
+<body class="bg-white">
+    <div class="flex items-center justify-center relative py-2">
+        <h1 class="text-2xl font-bold">归档页面
+            <span id="infoIcon" class="inline-block w-5 h-5 bg-gray-300 text-white rounded-full text-center leading-5 text-sm ml-2 cursor-pointer align-super">!</span>
+        </h1>
     </div>
-    <ul id="file-list"></ul>
+    
+    <!-- 弹窗 -->
+    <div id="infoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 transition-opacity duration-300 opacity-0">
+        <div id="modalContent" class="bg-white p-6 rounded-lg shadow-lg max-w-md transform scale-75 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium">归档说明</h3>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+            <p class="text-gray-700">归档文件按照最新版本的更新日期进行命名和排序</p>
+        </div>
+    </div>
+
+    <ul id="file-list" class="max-w-xl mx-auto grid grid-cols-2 gap-5 list-none p-0"></ul>
 
     <script>
+        // 弹窗控制
+        const infoIcon = document.getElementById('infoIcon');
+        const infoModal = document.getElementById('infoModal');
+        const modalContent = document.getElementById('modalContent');
+        const closeModal = document.getElementById('closeModal');
+        
+        // 显示弹窗函数
+        function showModal() {
+            // 先显示容器但透明度为0
+            infoModal.classList.remove('hidden');
+            
+            // 强制重绘以确保过渡效果生效
+            void infoModal.offsetWidth;
+            
+            // 设置透明度为1并放大内容
+            infoModal.classList.add('opacity-100');
+            modalContent.classList.remove('scale-75');
+            modalContent.classList.add('scale-100');
+        }
+        
+        // 隐藏弹窗函数
+        function hideModal() {
+            // 先缩小内容并降低透明度
+            infoModal.classList.remove('opacity-100');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-75');
+            
+            // 等待动画完成后隐藏弹窗
+            setTimeout(() => {
+                infoModal.classList.add('hidden');
+            }, 300);
+        }
+        
+        infoIcon.addEventListener('click', showModal);
+        closeModal.addEventListener('click', hideModal);
+        
+        // 点击弹窗外部关闭弹窗
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) {
+                hideModal();
+            }
+        });
+        
         // 修改为直接加载 JSON 文件
         fetch("./Archived/file-list.json")
         .then(response => {
@@ -85,16 +102,13 @@
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 
-                // 设置样式
-                li.style.listStyleType = "disc";
-                li.style.fontSize = "20px";
-                li.style.lineHeight = "1.6";
-
+                // 使用 Tailwind 类替代内联样式
+                li.className = "pl-5 relative text-lg list-disc leading-relaxed";
+                a.className = "no-underline text-gray-700 hover:text-orange-400 hover:pl-1 transition-all duration-200";
+                
                 // 修正链接路径
                 a.href = `./Archived/${file}`;  // 使用相对路径
                 a.textContent = file.replace('.html', '');
-                a.style.textDecoration = "none";
-                a.style.color = "#2c3e50";
                 
                 li.appendChild(a);
                 list.appendChild(li);
@@ -103,7 +117,7 @@
         .catch(error => {
             console.error('加载失败:', error);
             document.getElementById('file-list').innerHTML = `
-                <li style="color: #e74c3c; margin-left: 25px; font-size: 14px;">
+                <li class="text-red-500 ml-6 text-sm">
                     ${error.message}
                 </li>
             `;
