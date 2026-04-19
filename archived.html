@@ -7,8 +7,9 @@
 -->
 
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
+    <meta charset="utf-8">
     <title>Archived Resume</title>
     <link rel=icon type=image/svg+xml href="/assets/favicon.svg">
     <!-- 添加 Tailwind CSS CDN -->
@@ -22,29 +23,41 @@
     <!-- 引入返回导航脚本 -->
     <script src="./js/backNavigation.js"></script>
 </head>
-<body class="bg-white flex flex-col min-h-screen">
-    <div class="flex items-center justify-center relative py-2">
-        <h1 class="text-2xl font-bold">归档页面
-            <span id="infoIcon" class="inline-block w-5 h-5 bg-gray-300 text-white rounded-full text-center leading-5 text-sm ml-2 cursor-pointer align-super">!</span>
-        </h1>
+<body class="bg-gray-50 flex flex-col min-h-screen font-sans antialiased selection:bg-orange-200 selection:text-orange-900">
+    <!-- 装饰性背景 -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-orange-100/50 blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-5%] w-[30%] h-[50%] rounded-full bg-rose-50/50 blur-[100px]"></div>
+    </div>
+    <div class="flex flex-col items-center justify-center relative pt-32 pb-8 z-10 w-full">
+        <div class="text-center">
+            <h1 class="text-4xl font-black tracking-tight text-gray-900 flex items-center justify-center gap-3 mb-3">
+                归档页面
+                <button id="infoIcon" class="flex items-center justify-center w-8 h-8 bg-orange-100 text-orange-600 hover:bg-orange-500 hover:text-white rounded-full transition-all duration-300 focus:outline-none shadow-sm hover:shadow-md transform hover:-translate-y-0.5" title="归档说明">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </button>
+            </h1>
+            <p class="text-gray-500 text-sm font-medium tracking-wide">查看过去的简历快照记录</p>
+        </div>
     </div>
     
     <!-- 弹窗 -->
-    <div id="infoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 transition-opacity duration-300 opacity-0">
-        <div id="modalContent" class="bg-white p-6 rounded-lg shadow-lg max-w-md transform scale-75 transition-transform duration-300">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-medium">归档说明</h3>
-                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
+    <div id="infoModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center hidden z-[10000] transition-all duration-300 opacity-0">
+        <div id="modalContent" class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-all duration-300">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">归档说明</h3>
+                <p class="text-gray-500 mb-6 leading-relaxed">归档文件按照最新版本的更新日期进行命名和排序，点击卡片即可查看当时的简历快照。</p>
+                <button id="closeModal" class="w-full py-3 px-4 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+                    我知道了
                 </button>
             </div>
-            <p class="text-gray-700">归档文件按照最新版本的更新日期进行命名和排序</p>
         </div>
     </div>
 
-    <ul id="file-list" class="max-w-xl mx-auto grid grid-cols-2 gap-5 list-none p-0 flex-grow"></ul>
+    <ul id="file-list" class="max-w-2xl mx-auto w-full px-6 grid grid-cols-1 gap-5 list-none p-0 flex-grow pb-24 z-10 relative"></ul>
 
     <script>
         // 弹窗控制
@@ -63,7 +76,7 @@
             
             // 设置透明度为1并放大内容
             infoModal.classList.add('opacity-100');
-            modalContent.classList.remove('scale-75');
+            modalContent.classList.remove('scale-95');
             modalContent.classList.add('scale-100');
         }
         
@@ -72,7 +85,7 @@
             // 先缩小内容并降低透明度
             infoModal.classList.remove('opacity-100');
             modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-75');
+            modalContent.classList.add('scale-95');
             
             // 等待动画完成后隐藏弹窗
             setTimeout(() => {
@@ -102,13 +115,54 @@
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 
-                // 使用 Tailwind 类替代内联样式
-                li.className = "pl-5 relative text-lg list-disc leading-relaxed";
-                a.className = "no-underline text-gray-700 hover:text-orange-400 hover:pl-1 transition-all duration-200";
+                // 现代化卡片式列表
+                li.className = "group relative";
+                a.className = "flex items-center justify-between p-5 bg-white border border-gray-100 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(234,88,12,0.15)] hover:border-orange-200 transition-all duration-300 ease-out no-underline text-gray-700 group-hover:text-orange-600 transform hover:-translate-y-1";
                 
-                // 修正链接路径
-                a.href = `./Archived/${file}`;  // 使用相对路径
-                a.textContent = file.replace('.html', '');
+                a.href = `./Archived/${file}`;
+                
+                // 提取日期格式以便显示
+                const fileName = file.replace('.html', '');
+                const dateParts = fileName.split('-');
+                let dateDisplay = fileName;
+                let isToday = false;
+                
+                if (dateParts.length === 3) {
+                    const today = new Date();
+                    const fileDate = new Date(fileName);
+                    isToday = today.toDateString() === fileDate.toDateString();
+                    
+                    dateDisplay = `
+                        <div class="flex flex-col">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors">${dateParts[0]}年${dateParts[1]}月${dateParts[2]}日</span>
+                            </div>
+                            <div class="mt-2 flex items-center h-5">
+                                ${isToday ? `<span class="inline-flex items-center text-[10px] font-bold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full w-fit border border-orange-200">最新快照</span>` : `<span class="text-xs text-gray-400 font-medium group-hover:text-gray-500 transition-colors">简历存档记录</span>`}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // 内部 HTML 结构：左侧日期区块 + 右侧箭头
+                a.innerHTML = `
+                    <div class="flex items-center gap-5 w-full">
+                        <div class="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-2xl bg-white border shadow-sm ${isToday ? 'border-orange-200 shadow-orange-100/50 text-orange-500' : 'border-gray-100 text-gray-400'} group-hover:bg-gradient-to-br group-hover:from-orange-400 group-hover:to-orange-600 group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-orange-500/20 transition-all duration-400 ease-out transform group-hover:-rotate-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                ${isToday 
+                                    ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>` 
+                                    : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>`
+                                }
+                            </svg>
+                        </div>
+                        <div class="flex-grow text-left">
+                            ${dateParts.length === 3 ? dateDisplay : `<span class="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors">${fileName}</span>`}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 group-hover:bg-orange-50 transition-colors duration-300 ml-auto shrink-0 border border-transparent group-hover:border-orange-100">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-orange-500 transform group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                `;
                 
                 li.appendChild(a);
                 list.appendChild(li);
@@ -123,11 +177,12 @@
             `;
         });
     </script>
-    <footer class="mt-auto sticky bottom-0 left-0 right-0 w-full flex items-center justify-center backdrop-blur-sm py-3 bg-white bg-opacity-90">
+    <footer class="mt-auto w-full flex items-center justify-center py-6 bg-transparent">
         <div class="container mx-auto px-4 text-center">
-            <div class="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-500">
-                <div class="inline-flex items-center gap-1">
-                        由<em>SanXiaoXing</em>创建
+            <div class="flex flex-wrap items-center justify-center gap-2 text-sm font-medium text-gray-400">
+                <div class="inline-flex items-center gap-1.5">
+                        <span class="text-gray-500">Created by</span>
+                        <em class="text-gray-700 font-bold not-italic">SanXiaoXing</em>
                     <span class="mx-1">•</span>
                     <a
                         href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"
